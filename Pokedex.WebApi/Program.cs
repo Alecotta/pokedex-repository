@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Hosting;
 using Pokedex.WebApi.Infrastructure.ExternalServices;
+using Pokedex.WebApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -6,11 +8,15 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-//Clients
+//Services
 builder.Services.AddHttpClient<IPokeApiService, PokeApiService>(httpClient =>
 {
     httpClient.BaseAddress = new Uri(builder.Configuration["ExternalApis:PokeAPI"]);
 });
+builder.Services.AddScoped<IPokemonService, PokemonService>();
+
+//Libraries
+builder.Services.AddAutoMapper(typeof(Program));
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

@@ -1,9 +1,10 @@
 ﻿namespace Pokedex.WebApi.DTOs.Response
 {
-    public class PokemonResponseDTO<T>
+    public class PokemonResponseDTO
     {
-        public bool Success { get; set; }
-        public T? Response { get; set; }
-        public string ErrorMessage { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public string Habitat { get; set; } = string.Empty;
+        public bool IsLegendary { get; set; }
     }
 }

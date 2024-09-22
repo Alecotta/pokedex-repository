@@ -1,15 +1,42 @@
-﻿namespace Pokedex.WebApi.Services
+﻿using AutoMapper;
+using Pokedex.WebApi.DTOs.Response;
+using Pokedex.WebApi.Infrastructure.ExternalServices;
+using Pokedex.WebApi.Models;
+
+namespace Pokedex.WebApi.Services
 {
-    public class PokemonService
+    public class PokemonService : IPokemonService
     {
-        public async Task<object> GetPokemonByNameAsync(string pokemonName)
+        private readonly IPokeApiService _pokeApiService;
+        private readonly IMapper _mapper;
+
+        public PokemonService
+        (
+            IPokeApiService pokeApiService,
+            IMapper mapper
+        )
+        {
+            _pokeApiService = pokeApiService;
+            _mapper = mapper;
+        }
+
+        public async Task<Result<PokemonResponseDTO?>> GetPokemonByNameAsync(string pokemonName)
         {
             if (string.IsNullOrWhiteSpace(pokemonName))
             {
                 throw new ArgumentNullException(nameof(pokemonName));
             }
 
-            return null;
+            var pokemonSpecieModelResult = await _pokeApiService.GetPokemonSpecieModelByNameAsync(pokemonName);
+            if (!pokemonSpecieModelResult.IsSuccess)
+            {
+                return Result<PokemonResponseDTO?>.Failure(pokemonSpecieModelResult.ErrorMessage);
+            }
+
+
+            var pokemonResponseDTO = _mapper.Map<PokemonResponseDTO>(pokemonSpecieModelResult.Data);
+
+            return Result<PokemonResponseDTO?>.Success(pokemonResponseDTO); ;
         }
     }
 }

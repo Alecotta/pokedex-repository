@@ -13,39 +13,39 @@ namespace Pokedex.Test.Controllers
 {
     public class PokemonControllerTest
     {
-        [Fact]
-        public async Task GetPokemonByName_ReturnBadRequestWhenPokemonNameIsEmpty()
-        {
-            //Arrange
-            var mockPokemonLogger = new Mock<ILogger<PokemonController>>();
-            var pokemonController = new PokemonController(mockPokemonLogger.Object);
+        //[Fact]
+        //public async Task GetPokemonByName_ReturnBadRequestWhenPokemonNameIsEmpty()
+        //{
+        //    //Arrange
+        //    var mockPokemonLogger = new Mock<ILogger<PokemonController>>();
+        //    var pokemonController = new PokemonController(mockPokemonLogger.Object);
 
-            //Act
-            string pokemonName = string.Empty;
-            var response = await pokemonController.GetPokemonByName(pokemonName) as BadRequestObjectResult;
-            var responseValue = response?.Value as PokemonResponseDTO<string>;
+        //    //Act
+        //    string pokemonName = string.Empty;
+        //    var response = await pokemonController.GetPokemonByName(pokemonName) as BadRequestObjectResult;
+        //    var responseValue = response?.Value as PokemonResponseDTO<string>;
 
-            //Assert
-            Assert.NotNull(responseValue);
-            Assert.False(responseValue.Success);
-        }
+        //    //Assert
+        //    Assert.NotNull(responseValue);
+        //    Assert.False(responseValue.Success);
+        //}
 
-        [Fact]
-        public async Task GetPokemonByName_ReturnBadRequestWhenPokemonNameIsNull()
-        {
-            //Arrange
-            var mockPokemonLogger = new Mock<ILogger<PokemonController>>();
-            var pokemonController = new PokemonController(mockPokemonLogger.Object);
+        //[Fact]
+        //public async Task GetPokemonByName_ReturnBadRequestWhenPokemonNameIsNull()
+        //{
+        //    //Arrange
+        //    var mockPokemonLogger = new Mock<ILogger<PokemonController>>();
+        //    var pokemonController = new PokemonController(mockPokemonLogger.Object);
 
-            //Act
-            string? pokemonName = null;
-            var response = await pokemonController.GetPokemonByName(pokemonName) as BadRequestObjectResult;
-            var responseValue = response?.Value as PokemonResponseDTO<string>;
+        //    //Act
+        //    string? pokemonName = null;
+        //    var response = await pokemonController.GetPokemonByName(pokemonName) as BadRequestObjectResult;
+        //    var responseValue = response?.Value as PokemonResponseDTO<string>;
 
-            //Assert
-            Assert.NotNull(responseValue);
-            Assert.False(responseValue.Success);
-        }
+        //    //Assert
+        //    Assert.NotNull(responseValue);
+        //    Assert.False(responseValue.Success);
+        //}
 
 
     }

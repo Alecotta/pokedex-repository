@@ -34,7 +34,7 @@ namespace Pokedex.WebApi.Infrastructure.ExternalServices
             {
                 return Result<PokemonSpecieModel?>.Failure("Resource not found.");
             }
-            catch
+            catch (Exception ex)
             {
                 return Result<PokemonSpecieModel?>.Failure("External Service Error.");
             }
