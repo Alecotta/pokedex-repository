@@ -1,11 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
-using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
-using Moq;
+﻿using Moq;
 using Pokedex.Test.Helpers;
 using Pokedex.WebApi.Infrastructure.ExternalServices;
 using Pokedex.WebApi.Models.PokeApi;
-using SoloX.CodeQuality.Test.Helpers.Http;
 using System.Net;
 
 namespace Pokedex.Test.Infrastructure
@@ -39,11 +35,11 @@ namespace Pokedex.Test.Infrastructure
         }
 
         [Fact]
-        public async Task GetPokemonSpecieModelByNameAsync_ReturnNullWhenPokemonNotFound()
+        public async Task GetPokemonSpecieModelByNameAsync_ReturnNullWhenPokemonNotFoundAndStatusCode404()
         {
             //Arrange
             string? pokemonName = "pokemon_test";
-            var mockHttpMessageHandler = MockHttpMessageHandler.Return404();
+            var mockHttpMessageHandler = MockHttpMessageHandler.ReturnMockHttpResponse<object?>(HttpStatusCode.NotFound, null);
             
             var mockHttpClient = new HttpClient(mockHttpMessageHandler.Object)
             {
@@ -58,6 +54,7 @@ namespace Pokedex.Test.Infrastructure
             //Assert
             Assert.False(result.IsSuccess);
             Assert.Null(result.Data);
+            Assert.Equal(result.StatusCode, HttpStatusCode.NotFound);
         }
 
         [Fact]
@@ -65,7 +62,7 @@ namespace Pokedex.Test.Infrastructure
         {
             //Arrange
             string? pokemonName = "pokemon_test";
-            var mockHttpMessageHandler = MockHttpMessageHandler.Return500();
+            var mockHttpMessageHandler = MockHttpMessageHandler.ReturnMockHttpResponse<object?>(HttpStatusCode.BadGateway, null);
 
             var mockHttpClient = new HttpClient(mockHttpMessageHandler.Object)
             {
@@ -80,10 +77,11 @@ namespace Pokedex.Test.Infrastructure
             //Assert
             Assert.False(result.IsSuccess);
             Assert.Null(result.Data);
+            Assert.Equal(result.StatusCode, HttpStatusCode.BadGateway);
         }
 
         [Fact]
-        public async Task GetPokemonSpecieModelByNameAsync_ReturnSuccessAndResultNotNullWhenPokemonFound()
+        public async Task GetPokemonSpecieModelByNameAsync_ReturnSuccessAndResultNotNullWhenPokemonFoundAndStatusCode200()
         {
             //Arrange
             string? pokemonName = "pokemon_test";
@@ -107,6 +105,7 @@ namespace Pokedex.Test.Infrastructure
             //Assert
             Assert.True(result.IsSuccess);
             Assert.NotNull(result.Data);
+            Assert.Equal(result.StatusCode, HttpStatusCode.OK);
         }
     }
 }

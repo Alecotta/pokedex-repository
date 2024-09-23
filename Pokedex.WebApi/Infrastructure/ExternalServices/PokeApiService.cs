@@ -12,7 +12,7 @@ namespace Pokedex.WebApi.Infrastructure.ExternalServices
             _httpClient = httpClient;
         }
 
-        public async Task<Result<PokemonSpecieModel?>> GetPokemonSpecieModelByNameAsync(string pokemonName)
+        public async Task<ResultModel<PokemonSpecieModel?>> GetPokemonSpecieModelByNameAsync(string pokemonName)
         {
             if (string.IsNullOrWhiteSpace(pokemonName))
             {
@@ -21,22 +21,24 @@ namespace Pokedex.WebApi.Infrastructure.ExternalServices
 
             var endpoint = $"pokemon-species/{pokemonName}";
 
+            HttpResponseMessage? response;
+
             try
             {
-                var response = await _httpClient.GetAsync(endpoint);
+                response = await _httpClient.GetAsync(endpoint);
                 response.EnsureSuccessStatusCode();
 
                 var pokemonSpecieModel = await response.Content.ReadFromJsonAsync<PokemonSpecieModel?>();
 
-                return Result<PokemonSpecieModel?>.Success(pokemonSpecieModel);
+                return ResultModel<PokemonSpecieModel?>.Success(pokemonSpecieModel, response.StatusCode);
             }
-            catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+            catch (HttpRequestException ex)
             {
-                return Result<PokemonSpecieModel?>.Failure("Resource not found.");
+                return ResultModel<PokemonSpecieModel?>.Failure(ex.Message, ex.StatusCode);
             }
             catch (Exception ex)
             {
-                return Result<PokemonSpecieModel?>.Failure("External Service Error.");
+                return ResultModel<PokemonSpecieModel?>.Failure(ex.Message);
             }
         }
     }

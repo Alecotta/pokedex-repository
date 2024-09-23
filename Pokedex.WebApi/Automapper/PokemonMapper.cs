@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Pokedex.WebApi.DTOs.Response;
-using Pokedex.WebApi.Models;
 using Pokedex.WebApi.Models.PokeApi;
 
 namespace Pokedex.WebApi.Automapper

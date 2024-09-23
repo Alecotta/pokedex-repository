@@ -5,11 +5,7 @@ using Pokedex.WebApi.Infrastructure.ExternalServices;
 using Pokedex.WebApi.Models;
 using Pokedex.WebApi.Models.PokeApi;
 using Pokedex.WebApi.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Net;
 
 namespace Pokedex.Test.Services
 {
@@ -42,7 +38,7 @@ namespace Pokedex.Test.Services
         }
 
         [Fact]
-        public async Task GetPokemonByNameAsync_ReturnSuccessTrueAndResultNotNullWhenPokemonFound()
+        public async Task GetPokemonByNameAsync_ReturnSuccessTrueAndResultNotNullWhenPokemonFoundAndStatusCode200()
         {
             //Arrange
             string pokemonName = "pokemon_test";
@@ -73,7 +69,7 @@ namespace Pokedex.Test.Services
             var mockPokeApiService = new Mock<IPokeApiService>();
 
             mockPokeApiService.Setup(m => m.GetPokemonSpecieModelByNameAsync(pokemonName))
-                .ReturnsAsync(Result<PokemonSpecieModel?>.Success(pokemonSpecieModelMock));
+                .ReturnsAsync(ResultModel<PokemonSpecieModel?>.Success(pokemonSpecieModelMock, HttpStatusCode.OK));
 
             var mockMapper = new Mock<IMapper>();
             mockMapper.Setup(m => m.Map<PokemonResponseDTO>(It.IsAny<PokemonSpecieModel>())).Returns(pokemonResponseDTOMock);
@@ -85,6 +81,7 @@ namespace Pokedex.Test.Services
             //Act & Assert
             Assert.True(getPokemonByNameAsyncResult.IsSuccess);
             Assert.NotNull(getPokemonByNameAsyncResult.Data);
+            Assert.Equal(getPokemonByNameAsyncResult.StatusCode, HttpStatusCode.OK);
             Assert.Equal(getPokemonByNameAsyncResult.Data.Name, pokemonName);
             Assert.Equal(getPokemonByNameAsyncResult.Data.IsLegendary, pokemonResponseDTOMock.IsLegendary);
             Assert.Equal(getPokemonByNameAsyncResult.Data.Habitat, pokemonResponseDTOMock.Habitat);
@@ -99,7 +96,7 @@ namespace Pokedex.Test.Services
 
             var mockPokeApiService = new Mock<IPokeApiService>();
             mockPokeApiService.Setup(m => m.GetPokemonSpecieModelByNameAsync(pokemonName))
-                .ReturnsAsync(Result<PokemonSpecieModel?>.Failure("Pokemon Not Found."));
+                .ReturnsAsync(ResultModel<PokemonSpecieModel?>.Failure("Pokemon Not Found.", HttpStatusCode.NotFound));
 
             var mockMapper = new Mock<IMapper>();
             var pokemonService = new PokemonService(mockPokeApiService.Object, mockMapper.Object);
@@ -110,6 +107,7 @@ namespace Pokedex.Test.Services
             //Act & Assert
             Assert.False(getPokemonByNameAsyncResult.IsSuccess);
             Assert.Null(getPokemonByNameAsyncResult.Data);
+            Assert.Equal(getPokemonByNameAsyncResult.StatusCode, HttpStatusCode.NotFound);
         }
 
         [Fact]
@@ -120,7 +118,7 @@ namespace Pokedex.Test.Services
 
             var mockPokeApiService = new Mock<IPokeApiService>();
             mockPokeApiService.Setup(m => m.GetPokemonSpecieModelByNameAsync(pokemonName))
-                .ReturnsAsync(Result<PokemonSpecieModel?>.Failure("Internal Server Error."));
+                .ReturnsAsync(ResultModel<PokemonSpecieModel?>.Failure("Bad Gateway.", HttpStatusCode.BadGateway));
 
             var mockMapper = new Mock<IMapper>();
             var pokemonService = new PokemonService(mockPokeApiService.Object, mockMapper.Object);
@@ -131,6 +129,7 @@ namespace Pokedex.Test.Services
             //Act & Assert
             Assert.False(getPokemonByNameAsyncResult.IsSuccess);
             Assert.Null(getPokemonByNameAsyncResult.Data);
+            Assert.Equal(getPokemonByNameAsyncResult.StatusCode, HttpStatusCode.BadGateway);
         }
     }
 }

@@ -5,6 +5,6 @@ namespace Pokedex.WebApi.Services
 {
     public interface IPokemonService
     {
-        Task<Result<PokemonResponseDTO?>> GetPokemonByNameAsync(string pokemonName);
+        Task<ResultModel<PokemonResponseDTO?>> GetPokemonByNameAsync(string pokemonName);
     }
 }

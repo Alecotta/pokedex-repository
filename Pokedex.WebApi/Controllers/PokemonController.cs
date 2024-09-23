@@ -1,37 +1,60 @@
 using Microsoft.AspNetCore.Mvc;
 using Pokedex.WebApi.DTOs.Response;
+using Pokedex.WebApi.Helpers;
 using Pokedex.WebApi.Models;
+using Pokedex.WebApi.Services;
 using System.ComponentModel.DataAnnotations;
 
 namespace Pokedex.WebApi.Controllers
 {
     [ApiController]
-    [Route("api/v1/[controller]")]
+    [Route("[controller]")]
     public class PokemonController : ControllerBase
     {
-
+        private readonly IPokemonService _pokemonService;
         private readonly ILogger<PokemonController> _logger;
 
-        public PokemonController(ILogger<PokemonController> logger)
+        public PokemonController
+        (
+            IPokemonService pokemonService,
+            ILogger<PokemonController> logger
+        )
         {
+            _pokemonService = pokemonService;
             _logger = logger;
         }
 
         [HttpGet("{pokemonName}")]
         public async Task<IActionResult> GetPokemonByName
         (
-            [FromRoute][Required] string pokemonName
+            [FromRoute][Required] string? pokemonName
         )
         {
-            var response = Result<string>.Success("p");
+            ResultModel<PokemonResponseDTO> response;
 
             if (string.IsNullOrWhiteSpace(pokemonName))
             {
-                response.IsSuccess = false;
-                response.ErrorMessage = "Pokemon name must be defined.";
+                response = new(false, null, "Pokemon name must be defined.");
                 return BadRequest(response);
             }
-            return Ok();
+
+            var pokemonResponseDTO = await _pokemonService.GetPokemonByNameAsync(pokemonName);
+            if 
+            (
+                !pokemonResponseDTO.IsSuccess
+            )
+            {
+                if (pokemonResponseDTO.StatusCode.HasValue)
+                {
+                    return HttpStatusCodeHelper.ToObjectResult(pokemonResponseDTO.StatusCode.Value, pokemonResponseDTO);
+                }
+                else
+                {
+                    return Problem(pokemonResponseDTO.ErrorMessage);
+                }
+            }
+
+            return Ok(pokemonResponseDTO);
         }
     }
 }

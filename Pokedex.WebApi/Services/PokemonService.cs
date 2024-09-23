@@ -20,7 +20,7 @@ namespace Pokedex.WebApi.Services
             _mapper = mapper;
         }
 
-        public async Task<Result<PokemonResponseDTO?>> GetPokemonByNameAsync(string pokemonName)
+        public async Task<ResultModel<PokemonResponseDTO?>> GetPokemonByNameAsync(string pokemonName)
         {
             if (string.IsNullOrWhiteSpace(pokemonName))
             {
@@ -30,13 +30,13 @@ namespace Pokedex.WebApi.Services
             var pokemonSpecieModelResult = await _pokeApiService.GetPokemonSpecieModelByNameAsync(pokemonName);
             if (!pokemonSpecieModelResult.IsSuccess)
             {
-                return Result<PokemonResponseDTO?>.Failure(pokemonSpecieModelResult.ErrorMessage);
+                return ResultModel<PokemonResponseDTO?>.Failure(pokemonSpecieModelResult.ErrorMessage, pokemonSpecieModelResult.StatusCode);
             }
 
 
             var pokemonResponseDTO = _mapper.Map<PokemonResponseDTO>(pokemonSpecieModelResult.Data);
 
-            return Result<PokemonResponseDTO?>.Success(pokemonResponseDTO); ;
+            return ResultModel<PokemonResponseDTO?>.Success(pokemonResponseDTO, pokemonSpecieModelResult.StatusCode); ;
         }
     }
 }

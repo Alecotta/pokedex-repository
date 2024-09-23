@@ -5,6 +5,6 @@ namespace Pokedex.WebApi.Infrastructure.ExternalServices
 {
     public interface IPokeApiService
     {
-        Task<Result<PokemonSpecieModel?>> GetPokemonSpecieModelByNameAsync(string pokemonName);
+        Task<ResultModel<PokemonSpecieModel?>> GetPokemonSpecieModelByNameAsync(string pokemonName);
     }
 }

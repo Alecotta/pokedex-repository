@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Hosting;
 using Pokedex.WebApi.Infrastructure.ExternalServices;
 using Pokedex.WebApi.Services;
 
