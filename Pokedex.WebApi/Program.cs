@@ -1,3 +1,4 @@
+using Pokedex.WebApi.Factories;
 using Pokedex.WebApi.Infrastructure.ExternalServices;
 using Pokedex.WebApi.Services;
 
@@ -12,7 +13,9 @@ builder.Services.AddHttpClient<IPokeApiService, PokeApiService>(httpClient =>
 {
     httpClient.BaseAddress = new Uri(builder.Configuration["ExternalApis:PokeAPI"]);
 });
+builder.Services.AddScoped<ITranslatorService, TranslatorService>();
 builder.Services.AddScoped<IPokemonService, PokemonService>();
+builder.Services.AddScoped<ICustomHttpClientFactory, CustomHttpClientFactory>();
 
 //Libraries
 builder.Services.AddAutoMapper(typeof(Program));

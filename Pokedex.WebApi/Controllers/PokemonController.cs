@@ -56,5 +56,38 @@ namespace Pokedex.WebApi.Controllers
 
             return Ok(pokemonResponseDTO);
         }
+
+        [HttpGet("translated/{pokemonName}")]
+        public async Task<IActionResult> GetPokemonByNameWithDescriptionTranslated
+        (
+            [FromRoute][Required] string? pokemonName
+        )
+        {
+            ResultModel<PokemonResponseDTO> response;
+
+            if (string.IsNullOrWhiteSpace(pokemonName))
+            {
+                response = new(false, null, "Pokemon name must be defined.");
+                return BadRequest(response);
+            }
+
+            var pokemonResponseDTO = await _pokemonService.GetPokemonByNameAsync(pokemonName, true);
+            if
+            (
+                !pokemonResponseDTO.IsSuccess
+            )
+            {
+                if (pokemonResponseDTO.StatusCode.HasValue)
+                {
+                    return HttpStatusCodeHelper.ToObjectResult(pokemonResponseDTO.StatusCode.Value, pokemonResponseDTO);
+                }
+                else
+                {
+                    return Problem(pokemonResponseDTO.ErrorMessage);
+                }
+            }
+
+            return Ok(pokemonResponseDTO);
+        }
     }
 }

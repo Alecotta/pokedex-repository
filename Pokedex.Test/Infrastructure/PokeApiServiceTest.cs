@@ -38,7 +38,7 @@ namespace Pokedex.Test.Infrastructure
         public async Task GetPokemonSpecieModelByNameAsync_ReturnNullWhenPokemonNotFoundAndStatusCode404()
         {
             //Arrange
-            string? pokemonName = "pokemon_test";
+            var pokemonName = "pokemon_test";
             var mockHttpMessageHandler = MockHttpMessageHandler.ReturnMockHttpResponse<object?>(HttpStatusCode.NotFound, null);
             
             var mockHttpClient = new HttpClient(mockHttpMessageHandler.Object)
@@ -88,7 +88,7 @@ namespace Pokedex.Test.Infrastructure
             var mockHttpResponse = new PokemonSpecieModel
             {
                 Name = "mock_pokemon",
-                Id = 1
+                Id = It.IsAny<int>()
             };
             var mockHttpMessageHandler = MockHttpMessageHandler.ReturnMockHttpResponse(HttpStatusCode.OK, mockHttpResponse); ;
 

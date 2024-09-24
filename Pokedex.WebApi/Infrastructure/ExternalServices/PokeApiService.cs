@@ -1,5 +1,6 @@
 ﻿using Pokedex.WebApi.Models;
 using Pokedex.WebApi.Models.PokeApi;
+using Pokedex.WebApi.Models.Translation;
 
 namespace Pokedex.WebApi.Infrastructure.ExternalServices
 {
@@ -32,13 +33,9 @@ namespace Pokedex.WebApi.Infrastructure.ExternalServices
 
                 return ResultModel<PokemonSpecieModel?>.Success(pokemonSpecieModel, response.StatusCode);
             }
-            catch (HttpRequestException ex)
-            {
-                return ResultModel<PokemonSpecieModel?>.Failure(ex.Message, ex.StatusCode);
-            }
             catch (Exception ex)
             {
-                return ResultModel<PokemonSpecieModel?>.Failure(ex.Message);
+                return ResultModel<PokemonSpecieModel?>.Failure(ex.Message, ex.GetType() == typeof(HttpRequestException) ? ((HttpRequestException)ex).StatusCode : null);
             }
         }
     }
