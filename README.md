@@ -12,4 +12,4 @@ dotnet restore
 
 ### 3. Run the Application
 Execute the application running the following command:
-dotnet restore
+dotnet run
